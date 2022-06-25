@@ -10,9 +10,9 @@
 
         <TextBox x:Name="queuename" Margin="108,55,0,0" Width="175" TextWrapping="NoWrap" VerticalAlignment="Top" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Height="23"/>
 
-        <Label x:Name="regionlabel" Content="Region" HorizontalAlignment="Left" Margin="15,91,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <Label x:Name="accountlabel" Content="Account" HorizontalAlignment="Left" Margin="15,14,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <Label x:Name="queuenamelabel" Content="Queue name" Margin="10,51,306,157" FontWeight="Bold"/>
+        <Label x:Name="regionlabel" Content="Region" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Label x:Name="accountlabel" Content="Account" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <Label x:Name="queuenamelabel" Content="Queue name" Margin="10,52,306,156" FontWeight="Bold"/>
         <ComboBox x:Name="region" Width="175" Margin="108,93,0,119" HorizontalAlignment="Left">
             <ComboBoxItem Content="eu-central-1"/>
             <ComboBoxItem Content="eu-west-1"/>
@@ -25,9 +25,14 @@
             <ComboBoxItem Content="Phonixx"/>
             <ComboBoxItem Content="Bloxx"/>
         </ComboBox>
-        <Button x:Name="Start" Content="Start" Margin="74,152,232,42" Click="Start_Click" FontWeight="Bold"/>
+        <Button x:Name="Start" Content="Start" Margin="15,172,291,22" Click="Start_Click" FontWeight="Bold"/>
 
-        <TextBlock x:Name="statuslabel" HorizontalAlignment="Right" Margin="0,0,77,22" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="67" Width="135" Opacity="0.80" FontWeight="Bold"/>
+        <TextBlock x:Name="statuslabel" HorizontalAlignment="Right" Margin="0,0,24,18" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="67" Width="135" Opacity="0.80" FontWeight="Bold"/>
+        <Label x:Name="purgeLabel" Content="Purge queue?" HorizontalAlignment="Left" Margin="10,129,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
+        <RadioButton x:Name="purgeYes" HorizontalAlignment="Left" Margin="114,142,0,0" VerticalAlignment="Top"/>
+        <RadioButton x:Name="purgeNo" HorizontalAlignment="Left" Margin="146,143,0,0" VerticalAlignment="Top" IsChecked="True"/>
+        <Label x:Name="purgeYesLabel" Content="Yes" HorizontalAlignment="Left" Margin="108,123,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="purgeNoLabel" Content="No" HorizontalAlignment="Left" Margin="140,124,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5"/>
 
     </Grid>
 </Window>

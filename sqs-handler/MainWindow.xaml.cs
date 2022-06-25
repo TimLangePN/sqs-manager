@@ -20,9 +20,9 @@ namespace sqs_handler
         {
             statuslabel.Text = "Downloading...";
 
-            string role = Handler.GetEnvironment(env.Text);
-            string accountid = Handler.GetAccountId(env.Text);
-
+            //maps the role + accountid from the selected env, Phonixx/Bloxx 
+            string role = SqsQueueHandler.GetEnvironment(env.Text);
+            string accountid = SqsQueueHandler.GetAccountId(env.Text);
 
             string accesskey = AwsCredentials.GetCredentials(role, 1);
             string secretkey = AwsCredentials.GetCredentials(role, 2);
@@ -30,17 +30,20 @@ namespace sqs_handler
 
             var credentials = new SessionAWSCredentials(accesskey, secretkey, token);
 
-            List<string> messages = new List<string>();
+            //Instantiates the sqsClient
+            AmazonSQSClient sqsClient = new(credentials, SqsQueueHandler.GetRegionEndpoint(region.Text));
 
-            AmazonSQSClient sqsClient = new AmazonSQSClient(credentials, Handler.GetRegionEndpoint(region.Text));
+            List<string> messages = new();
+            //Loops 15 times through the amount of messages polled
 
+            var exc = false;
+            string queueurl = $"https://sqs.{region.Text}.amazonaws.com/{accountid}/{queuename.Text}";
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 100; i++)
             {
-                var exc = false;
                 try
                 {
-                    ReceiveMessageResponse response = await SqsMessageHandler.GetMessagesFromQueue(sqsClient, $"https://sqs.{region.Text}.amazonaws.com/{accountid}/{queuename.Text}");
+                    ReceiveMessageResponse response = await SqsMessageHandler.GetMessagesFromSqsQueue(sqsClient, queueurl);
 
                     foreach (var message in response.Messages)
                     {
@@ -52,15 +55,19 @@ namespace sqs_handler
                     statuslabel.Text = ex.Message;
                     exc = true;
                 }
-                if (exc == false)
+            }
+            if (exc == false)
+            {
+                FileWriter.WriteToJson(queuename.Text, messages);
+                statuslabel.Text = "Done!";
+            }
+            if (purgeYes.IsChecked == true)
+            {
+                try 
                 {
-                    FileWriter.WriteToJson(queuename.Text, messages);
-                    statuslabel.Text = "Done!";
+                    statuslabel.Text = SqsMessageHandler.PurgeMessagesFromSqsQueue(sqsClient, queueurl);
                 }
-                else
-                {
-
-                }
+                catch (Exception ex) { statuslabel.Text = ex.Message; }
             }
         }
     }

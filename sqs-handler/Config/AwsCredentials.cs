@@ -4,6 +4,8 @@ namespace sqs_handler
 {
     internal class AwsCredentials
     {
+        //Gets the credentials from .aws/credentials file
+        //It looks for the location of the inserted profile and grabs the first 3 lines underneath it
         public static string GetCredentials(string profile, int num)
         {
             string test = $"[{profile}]";
