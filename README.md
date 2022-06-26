@@ -1,26 +1,30 @@
-# SOM Postman Collections
+# SQS Manager - managing queue's better!
 
-Here you will find all the steps to add Postman Collections to Bitbucket.
+Simple WPF application to make it a little easier to do stuff with our queue's.
 
-You need to point to the master branch
-```
-git checkout master 
-```
-After pointing to the master branch, you will need to pull all the updates that occured
-```
-git pull
-```
-Now, you need to add or modify the files that you want to push to bitbucket
+*What we currently have in this version:*
+- redriving and downloading messages (automatically)
+- purging messages from a queue (optional)
 
-After you're adding/modifying the files, you need to promote pending changes from the working directory to the staging area
+*requirements:*
+- Python
+- Okta-AWSCLI
+
+*select profile from powershell using Okta-AWSCLI*
+
 ```
-git add .
+pip install okta-awscli
+okta-awscli --okta-profile pmgroup-prod 
+Enter password:
+Multi-factor Authentication required for application.
+Enter MFA verification code:
 ```
-After adding the change to the staging area, you need to move the files to the local repository
-```
-git commit -m '<Your message here>'
-```
-Now you can upload the local repository content to the remote repository
-```
-git push
-```
+
+*Double check if .aws folder contains the following:*
+- config file
+- credentials file
+
+*Double check if your user folder contains the following:*
+- .okta-aws file -> This file should look similar to the config file in .aws folder
+
+Run the .exe and have fun! :)
