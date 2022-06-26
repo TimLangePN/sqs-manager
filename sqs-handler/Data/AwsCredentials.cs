@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace sqs_handler
+namespace sqshandler
 {
     internal class AwsCredentials
     {

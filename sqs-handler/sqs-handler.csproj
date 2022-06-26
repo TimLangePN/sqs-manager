@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
-    <RootNamespace>sqs_handler</RootNamespace>
+    <RootNamespace>sqshandler</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
 	<ApplicationIcon>icon.ico</ApplicationIcon>

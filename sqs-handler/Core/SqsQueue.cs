@@ -3,7 +3,7 @@ using Amazon.SQS;
 using Amazon.SQS.Model;
 using System.Threading.Tasks;
 
-namespace sqs_handler
+namespace sqshandler
 {
     internal class SqsQueue
     {

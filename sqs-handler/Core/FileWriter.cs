@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace sqs_handler
+namespace sqshandler
 {
     internal class FileWriter
     {

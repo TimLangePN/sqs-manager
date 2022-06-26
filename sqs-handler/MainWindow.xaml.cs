@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace sqs_handler
+namespace sqshandler
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
