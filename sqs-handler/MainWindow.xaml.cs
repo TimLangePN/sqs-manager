@@ -22,21 +22,19 @@ namespace sqs_handler
             string role = SqsQueueHandler.GetEnvironment(env.Text);
             string accountid = SqsQueueHandler.GetAccountId(env.Text);
 
-            AwsCredentials awscredentials = new();
+            AwsCredentials awscredentials = new(role);
 
-            awscredentials.GetCredentials(role);
-
-            var credentials = new SessionAWSCredentials(awscredentials.accesskey, awscredentials.secretkey, awscredentials.token);
+            var credentials = new SessionAWSCredentials(awscredentials.Accesskey, awscredentials.Secretkey, awscredentials.Token);
 
             //Instantiates the sqsClient
             AmazonSQSClient sqsClient = new(credentials, SqsQueueHandler.GetRegionEndpoint(region.Text));
 
             List<string> messages = new();
-            //Loops 15 times through the amount of messages polled
 
             var exc = false;
             string queueurl = $"https://sqs.{region.Text}.amazonaws.com/{accountid}/{queuename.Text}";
 
+            //Loops 100 times through the amount of messages polled, to make sure we get all the messages.
             for (int i = 0; i < 100; i++)
             {
                 try
