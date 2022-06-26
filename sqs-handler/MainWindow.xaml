@@ -8,7 +8,7 @@
         Title="SQS Handler" Height="250" Width="400" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Background="#FFDDDDDD" Icon="/icon.png">
     <Grid Margin="0,0,0,0" Background="#FFC8C8C8">
 
-        <TextBox x:Name="queuename" Margin="108,55,0,0" Width="175" TextWrapping="NoWrap" VerticalAlignment="Top" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Height="23"/>
+        <TextBox x:Name="queueInput" Margin="108,55,0,0" Width="175" TextWrapping="NoWrap" VerticalAlignment="Top" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Height="23"/>
 
         <Label x:Name="regionlabel" Content="Region" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <Label x:Name="accountlabel" Content="Account" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" FontWeight="Bold"/>

@@ -18,6 +18,8 @@ namespace sqs_handler
         }
         public async void Start_Click(object sender, RoutedEventArgs e)
         {
+            var exc = false;
+
             //maps the role + accountid from the selected env, Phonixx/Bloxx 
             string role = SqsQueueHandler.GetEnvironment(env.Text);
             string accountid = SqsQueueHandler.GetAccountId(env.Text);
@@ -31,15 +33,14 @@ namespace sqs_handler
 
             List<string> messages = new();
 
-            var exc = false;
-            string queueurl = $"https://sqs.{region.Text}.amazonaws.com/{accountid}/{queuename.Text}";
+            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{accountid}/{queueInput.Text}";
 
             //Loops 100 times through the amount of messages polled, to make sure we get all the messages.
             for (int i = 0; i < 100; i++)
             {
                 try
                 {
-                    ReceiveMessageResponse response = await SqsMessageHandler.GetMessagesFromSqsQueue(sqsClient, queueurl);
+                    ReceiveMessageResponse response = await SqsMessageHandler.GetMessagesFromSqsQueue(sqsClient, qUrl);
 
                     statuslabel.Text = "Downloading...";
 
@@ -56,14 +57,14 @@ namespace sqs_handler
             }
             if (exc == false)
             {
-                FileWriter.WriteToJson(queuename.Text, messages);
+                FileWriter.WriteToJson(queueInput.Text, messages);
                 statuslabel.Text = "Done!";
             }
             if (purgeYes.IsChecked == true)
             {
                 try 
                 {
-                    SqsMessageHandler.PurgeMessagesFromSqsQueue(sqsClient, queueurl);
+                    SqsMessageHandler.PurgeMessagesFromSqsQueue(sqsClient, qUrl);
                     statuslabel.Text ="Messages have been purged!";
                 }
                 catch (Exception ex) { statuslabel.Text = ex.Message; }
