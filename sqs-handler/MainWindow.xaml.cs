@@ -63,7 +63,8 @@ namespace sqs_handler
             {
                 try 
                 {
-                    statuslabel.Text = SqsMessageHandler.PurgeMessagesFromSqsQueue(sqsClient, queueurl);
+                    SqsMessageHandler.PurgeMessagesFromSqsQueue(sqsClient, queueurl);
+                    statuslabel.Text ="Messages have been purged!";
                 }
                 catch (Exception ex) { statuslabel.Text = ex.Message; }
             }

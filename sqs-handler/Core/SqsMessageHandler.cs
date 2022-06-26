@@ -18,18 +18,10 @@ namespace sqs_handler
                 VisibilityTimeout = 20
             });
         }
-        public static string PurgeMessagesFromSqsQueue(
+        public static void PurgeMessagesFromSqsQueue(
             IAmazonSQS sqsClient, string qUrl)
         {
-            try
-            {
                 sqsClient.PurgeQueueAsync(qUrl).Wait();
-                return "Messages have been purged!";
-            }
-            catch (Exception e)
-            {
-                return e.Message;
-            }
         }
     }
 }
