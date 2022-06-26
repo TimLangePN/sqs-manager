@@ -21,26 +21,27 @@ namespace sqs_handler
             var exc = false;
 
             //maps the role + accountid from the selected env, Phonixx/Bloxx 
-            string role = SqsQueueHandler.GetEnvironment(env.Text);
-            string accountid = SqsQueueHandler.GetAccountId(env.Text);
+            SqsQueue sqsQueue = new(env.Text);
 
-            AwsCredentials awscredentials = new(role);
+            //AwsCredentials class for the accesskey, secretkey and token
+            AwsCredentials awsCredentials = new(sqsQueue.Role);
 
-            var credentials = new SessionAWSCredentials(awscredentials.Accesskey, awscredentials.Secretkey, awscredentials.Token);
+            var credentials = new SessionAWSCredentials(awsCredentials.Accesskey, awsCredentials.Secretkey, awsCredentials.Token);
 
             //Instantiates the sqsClient
-            AmazonSQSClient sqsClient = new(credentials, SqsQueueHandler.GetRegionEndpoint(region.Text));
+            AmazonSQSClient sqsClient = new(credentials, SqsQueue.GetRegionEndpoint(region.Text));
 
             List<string> messages = new();
 
-            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{accountid}/{queueInput.Text}";
+            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{sqsQueue.AccountId}/{queueInput.Text}";
 
             //Loops 100 times through the amount of messages polled, to make sure we get all the messages.
             for (int i = 0; i < 100; i++)
             {
                 try
                 {
-                    ReceiveMessageResponse response = await SqsMessageHandler.GetMessagesFromSqsQueue(sqsClient, qUrl);
+                    //Gets messages from sqs in batches of 10
+                    ReceiveMessageResponse response = await SqsQueue.GetMessagesAsync(sqsClient, qUrl);
 
                     statuslabel.Text = "Downloading...";
 
@@ -64,7 +65,7 @@ namespace sqs_handler
             {
                 try 
                 {
-                    SqsMessageHandler.PurgeMessagesFromSqsQueue(sqsClient, qUrl);
+                    sqsClient.PurgeQueueAsync(qUrl).Wait();
                     statuslabel.Text ="Messages have been purged!";
                 }
                 catch (Exception ex) { statuslabel.Text = ex.Message; }

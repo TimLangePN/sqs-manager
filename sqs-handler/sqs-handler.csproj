@@ -10,19 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="icon.png" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AWSSDK.SQS" Version="3.7.2.71" />
   </ItemGroup>
 
   <ItemGroup>
     <Page Include="App.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="icon.png" />
   </ItemGroup>
 
 </Project>
