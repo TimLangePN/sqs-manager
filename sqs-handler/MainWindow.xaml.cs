@@ -18,17 +18,15 @@ namespace sqs_handler
         }
         public async void Start_Click(object sender, RoutedEventArgs e)
         {
-            statuslabel.Text = "Downloading...";
-
             //maps the role + accountid from the selected env, Phonixx/Bloxx 
             string role = SqsQueueHandler.GetEnvironment(env.Text);
             string accountid = SqsQueueHandler.GetAccountId(env.Text);
 
-            string accesskey = AwsCredentials.GetCredentials(role, 1);
-            string secretkey = AwsCredentials.GetCredentials(role, 2);
-            string token = AwsCredentials.GetCredentials(role, 3);
+            AwsCredentials awscredentials = new();
 
-            var credentials = new SessionAWSCredentials(accesskey, secretkey, token);
+            awscredentials.GetCredentials(role);
+
+            var credentials = new SessionAWSCredentials(awscredentials.accesskey, awscredentials.secretkey, awscredentials.token);
 
             //Instantiates the sqsClient
             AmazonSQSClient sqsClient = new(credentials, SqsQueueHandler.GetRegionEndpoint(region.Text));
@@ -44,6 +42,8 @@ namespace sqs_handler
                 try
                 {
                     ReceiveMessageResponse response = await SqsMessageHandler.GetMessagesFromSqsQueue(sqsClient, queueurl);
+
+                    statuslabel.Text = "Downloading...";
 
                     foreach (var message in response.Messages)
                     {

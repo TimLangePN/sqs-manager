@@ -5,7 +5,6 @@ namespace sqs_handler
 {
     internal class FileWriter
     {
-
         public static void WriteToJson(string queuename, List<string> messages)
         {
             //writes to desktop i.e. prod-parknow-offstreet-mediumapi-qparkqueue-deadletter20220625T141023.json
