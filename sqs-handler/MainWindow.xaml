@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:sqs_handler"
         mc:Ignorable="d"
-        Title="SQS Handler" Height="250" Width="400" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Background="#FFDDDDDD" Icon="/icon.png">
+        Title="SQS Handler" Height="250" Width="400" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Background="#FFDDDDDD">
     <Grid Margin="0,0,0,0" Background="#FFC8C8C8">
 
         <TextBox x:Name="queueInput" Margin="108,55,0,0" Width="175" TextWrapping="NoWrap" VerticalAlignment="Top" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Height="23"/>
