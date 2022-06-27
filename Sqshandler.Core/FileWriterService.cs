@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace sqs_handler
+﻿namespace Sqshandler.Core
 {
-    internal class FileWriter
+    public class FileWriterService
     {
         public static void WriteToJson(string queuename, List<string> messages)
         {
@@ -11,12 +8,12 @@ namespace sqs_handler
             string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string path = $"{home}/Documents/SQS-messages/";
 
-            bool exists = System.IO.Directory.Exists(path);
+            bool exists = Directory.Exists(path);
 
             if (!exists)
-                System.IO.Directory.CreateDirectory(path);
+                Directory.CreateDirectory(path);
 
-            System.IO.File.WriteAllLines($"{path}{queuename}{DateTime.Now.ToString("yyyyMMddTHHmmss")}.json", messages);
+            File.WriteAllLines($"{path}{queuename}{DateTime.Now:yyyyMMddTHHmmss}.json", messages);
         }
     }
 }

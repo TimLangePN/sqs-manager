@@ -3,18 +3,22 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
-    <RootNamespace>sqs_handler</RootNamespace>
+    <RootNamespace>sqshandler</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
 	<ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.SQS" Version="3.7.2.71" />
+    <PackageReference Include="AWSSDK.SQS" Version="3.7.2.72" />
   </ItemGroup>
 
   <ItemGroup>
     <Page Include="App.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sqshandler.Core\Sqshandler.Core.csproj" />
   </ItemGroup>
 
 </Project>

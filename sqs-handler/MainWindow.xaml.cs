@@ -1,11 +1,12 @@
 ﻿using Amazon.Runtime;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using Sqshandler.Core;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace sqs_handler
+namespace Sqshandler
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -21,19 +22,25 @@ namespace sqs_handler
             var exc = false;
 
             //maps the role + accountid from the selected env, Phonixx/Bloxx 
-            SqsQueue sqsQueue = new(env.Text);
+            SqsProcessorService sqsservice = new(env.Text, region.Text);
 
-            //AwsCredentials class for the accesskey, secretkey and token
-            AwsCredentials awsCredentials = new(sqsQueue.Role);
-
-            var credentials = new SessionAWSCredentials(awsCredentials.Accesskey, awsCredentials.Secretkey, awsCredentials.Token);
+            SessionAWSCredentials credentials;
+            try
+            {
+                credentials = AwsCredentialsService.GetCredentials(sqsservice.Role);
+            }
+            catch (Exception ex)
+            {
+                statuslabel.Text = ex.Message;
+                return;
+            }
 
             //Instantiates the sqsClient
-            AmazonSQSClient sqsClient = new(credentials, SqsQueue.GetRegionEndpoint(region.Text));
+            AmazonSQSClient sqsClient = new(credentials, sqsservice.Region);
 
             List<string> messages = new();
 
-            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{sqsQueue.AccountId}/{queueInput.Text}";
+            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{sqsservice.AccountId}/{queueInput.Text}";
 
             //Loops 100 times through the amount of messages polled, to make sure we get all the messages.
             for (int i = 0; i < 100; i++)
@@ -41,7 +48,7 @@ namespace sqs_handler
                 try
                 {
                     //Gets messages from sqs in batches of 10
-                    ReceiveMessageResponse response = await SqsQueue.GetMessagesAsync(sqsClient, qUrl);
+                    ReceiveMessageResponse response = await SqsProcessorService.GetMessagesAsync(sqsClient, qUrl);
 
                     statuslabel.Text = "Downloading...";
 
@@ -58,15 +65,15 @@ namespace sqs_handler
             }
             if (exc == false)
             {
-                FileWriter.WriteToJson(queueInput.Text, messages);
+                FileWriterService.WriteToJson(queueInput.Text, messages);
                 statuslabel.Text = "Done!";
             }
             if (purgeYes.IsChecked == true)
             {
-                try 
+                try
                 {
                     sqsClient.PurgeQueueAsync(qUrl).Wait();
-                    statuslabel.Text ="Messages have been purged!";
+                    statuslabel.Text = "Messages have been purged!";
                 }
                 catch (Exception ex) { statuslabel.Text = ex.Message; }
             }
