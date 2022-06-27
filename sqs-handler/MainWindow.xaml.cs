@@ -22,12 +22,12 @@ namespace Sqshandler
             var exc = false;
 
             //maps the role + accountid from the selected env, Phonixx/Bloxx 
-            SqsProcessorService sqsQueue = new(env.Text);
+            SqsProcessorService sqsservice = new(env.Text, region.Text);
 
             SessionAWSCredentials credentials;
             try
             {
-                credentials = AwsCredentialsService.GetCredentials(sqsQueue.Role);
+                credentials = AwsCredentialsService.GetCredentials(sqsservice.Role);
             }
             catch (Exception ex)
             {
@@ -36,11 +36,11 @@ namespace Sqshandler
             }
 
             //Instantiates the sqsClient
-            AmazonSQSClient sqsClient = new(credentials, SqsProcessorService.GetRegionEndpoint(region.Text));
+            AmazonSQSClient sqsClient = new(credentials, sqsservice.Region);
 
             List<string> messages = new();
 
-            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{sqsQueue.AccountId}/{queueInput.Text}";
+            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{sqsservice.AccountId}/{queueInput.Text}";
 
             //Loops 100 times through the amount of messages polled, to make sure we get all the messages.
             for (int i = 0; i < 100; i++)

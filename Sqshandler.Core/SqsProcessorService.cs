@@ -4,24 +4,45 @@ using Amazon.SQS.Model;
 
 namespace Sqshandler.Core
 {
-    public class SqsProcessorService
+    public class SqsProcessorService : ISqsProcessorService
     {
         public string Role { get; set; }
         public string AccountId { get; set; }
+        public RegionEndpoint Region { get; set; }
 
-        public SqsProcessorService(string env)
+        public SqsProcessorService(string env, string region)
         {
-            //roles
-            if (env == "Phonixx") Role = "pmgroup-prod";
-            else Role = "parknow-bloxx-prod";
-
-            //AWS Account id's
-            if (env == "Phonixx") AccountId = "660620967782";
-            else AccountId = "680226270606";
+            Role = GetRole(env);
+            AccountId = GetAccount(env);
+            Region = GetRegionEndpoint(region);
 
         }
 
-        public static RegionEndpoint GetRegionEndpoint(string region)
+        //Receives the messages from queue in batches of 10
+        public static async Task<ReceiveMessageResponse> GetMessagesAsync(
+            IAmazonSQS sqsClient, string qUrl)
+        {
+            return await sqsClient.ReceiveMessageAsync(new ReceiveMessageRequest
+            {
+                QueueUrl = qUrl,
+                MaxNumberOfMessages = 10,
+                VisibilityTimeout = 20
+            });
+        }
+        public string GetRole(string env)
+        {
+            //roles
+            if (env == "Phonixx") return "pmgroup-prod";
+            else return "parknow-bloxx-prod";
+
+        }
+        public string GetAccount(string env)
+        {
+            //AWS Account id's
+            if (env == "Phonixx") return "660620967782";
+            else return "680226270606";
+        }
+        public RegionEndpoint GetRegionEndpoint(string region)
         {
             //AWS RegionEndpoints
             switch (region)
@@ -37,18 +58,6 @@ namespace Sqshandler.Core
                 default:
                     return RegionEndpoint.EUNorth1;
             }
-        }
-
-        //Receives the messages from queue in batches of 10
-        public static async Task<ReceiveMessageResponse> GetMessagesAsync(
-            IAmazonSQS sqsClient, string qUrl)
-        {
-            return await sqsClient.ReceiveMessageAsync(new ReceiveMessageRequest
-            {
-                QueueUrl = qUrl,
-                MaxNumberOfMessages = 10,
-                VisibilityTimeout = 20
-            });
         }
     }
 }
