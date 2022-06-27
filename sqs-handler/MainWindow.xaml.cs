@@ -22,12 +22,12 @@ namespace Sqshandler
             var exc = false;
 
             //maps the role + accountid from the selected env, Phonixx/Bloxx 
-            SqsQueue sqsQueue = new(env.Text);
+            SqsProcessorService sqsQueue = new(env.Text);
 
             SessionAWSCredentials credentials;
             try
             {
-                credentials = AwsCredentialsCore.GetCredentials(sqsQueue.Role);
+                credentials = AwsCredentialsService.GetCredentials(sqsQueue.Role);
             }
             catch (Exception ex)
             {
@@ -36,7 +36,7 @@ namespace Sqshandler
             }
 
             //Instantiates the sqsClient
-            AmazonSQSClient sqsClient = new(credentials, SqsQueue.GetRegionEndpoint(region.Text));
+            AmazonSQSClient sqsClient = new(credentials, SqsProcessorService.GetRegionEndpoint(region.Text));
 
             List<string> messages = new();
 
@@ -48,7 +48,7 @@ namespace Sqshandler
                 try
                 {
                     //Gets messages from sqs in batches of 10
-                    ReceiveMessageResponse response = await SqsQueue.GetMessagesAsync(sqsClient, qUrl);
+                    ReceiveMessageResponse response = await SqsProcessorService.GetMessagesAsync(sqsClient, qUrl);
 
                     statuslabel.Text = "Downloading...";
 
@@ -70,10 +70,10 @@ namespace Sqshandler
             }
             if (purgeYes.IsChecked == true)
             {
-                try 
+                try
                 {
                     sqsClient.PurgeQueueAsync(qUrl).Wait();
-                    statuslabel.Text ="Messages have been purged!";
+                    statuslabel.Text = "Messages have been purged!";
                 }
                 catch (Exception ex) { statuslabel.Text = ex.Message; }
             }

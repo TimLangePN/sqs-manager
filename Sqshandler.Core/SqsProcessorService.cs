@@ -1,16 +1,15 @@
 ﻿using Amazon;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using System.Threading.Tasks;
 
 namespace Sqshandler.Core
 {
-    internal class SqsQueue
+    public class SqsProcessorService
     {
         public string Role { get; set; }
         public string AccountId { get; set; }
 
-        public SqsQueue(string env)
+        public SqsProcessorService(string env)
         {
             //roles
             if (env == "Phonixx") Role = "pmgroup-prod";

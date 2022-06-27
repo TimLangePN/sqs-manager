@@ -3,7 +3,7 @@ using Amazon.Runtime.CredentialManagement;
 
 namespace Sqshandler.Core
 {
-    public class AwsCredentialsCore
+    public class AwsCredentialsService
     {
         public static SessionAWSCredentials GetCredentials(string profile)
         {
