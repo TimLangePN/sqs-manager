@@ -17,4 +17,8 @@
     <Page Include="App.xaml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Sqshandler.Core\Sqshandler.Core.csproj" />
+  </ItemGroup>
+
 </Project>

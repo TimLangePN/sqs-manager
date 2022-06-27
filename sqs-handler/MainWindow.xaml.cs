@@ -1,11 +1,12 @@
 ﻿using Amazon.Runtime;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using Sqshandler.Core;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace sqshandler
+namespace Sqshandler
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,10 +24,16 @@ namespace sqshandler
             //maps the role + accountid from the selected env, Phonixx/Bloxx 
             SqsQueue sqsQueue = new(env.Text);
 
-            //AwsCredentials class for the accesskey, secretkey and token
-            AwsCredentials awsCredentials = new(sqsQueue.Role);
-
-            var credentials = new SessionAWSCredentials(awsCredentials.Accesskey, awsCredentials.Secretkey, awsCredentials.Token);
+            SessionAWSCredentials credentials;
+            try
+            {
+                credentials = AwsCredentialsCore.GetCredentials(sqsQueue.Role);
+            }
+            catch (Exception ex)
+            {
+                statuslabel.Text = ex.Message;
+                return;
+            }
 
             //Instantiates the sqsClient
             AmazonSQSClient sqsClient = new(credentials, SqsQueue.GetRegionEndpoint(region.Text));
@@ -58,7 +65,7 @@ namespace sqshandler
             }
             if (exc == false)
             {
-                FileWriter.WriteToJson(queueInput.Text, messages);
+                FileWriterService.WriteToJson(queueInput.Text, messages);
                 statuslabel.Text = "Done!";
             }
             if (purgeYes.IsChecked == true)
