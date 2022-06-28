@@ -18,12 +18,16 @@ namespace Sqshandler
 
         public MainWindow()
         {
+            ServiceCollection services = new ServiceCollection();
+            ConfigureServices(services);
+            serviceProvider = services.BuildServiceProvider();
             InitializeComponent();
         }
 
         private void ConfigureServices(ServiceCollection services)
         {
             services.AddSingleton<ISqsProcessorService, SqsProcessorService>();
+            services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
         }
 
         public async void Start_Click(object sender, RoutedEventArgs e)
@@ -105,5 +109,12 @@ namespace Sqshandler
             return (false, client, "");
         }
 
+        private void btnGetQueueName_Click(object sender, RoutedEventArgs e)
+        {
+            var sqsClient = CreateAwsSqsClient();
+            var sqsProcessorService = serviceProvider.GetService<ISqsProcessorService>();
+            var resp = sqsProcessorService.GetListSqs(sqsClient.SqsClient);
+
+        }
     }
 }

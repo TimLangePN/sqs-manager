@@ -6,6 +6,7 @@ namespace Sqshandler.Core
     public interface ISqsProcessorService
     {
         Task<ReceiveMessageResponse> GetMessagesAsync(IAmazonSQS sqsClient, string qUrl);
+        Task<ListDeadLetterSourceQueuesResponse> GetListSqs(IAmazonSQS sqsClient);
     }
 
     public class SqsProcessorService : ISqsProcessorService
@@ -13,6 +14,10 @@ namespace Sqshandler.Core
         public SqsProcessorService()
         {
         }
+
+        //Receives the messages from queue in batches of 10
+        public async Task<ListDeadLetterSourceQueuesResponse> GetListSqs(IAmazonSQS sqsClient) 
+            => await sqsClient.ListDeadLetterSourceQueuesAsync(new ListDeadLetterSourceQueuesRequest() { MaxResults = 1000 });
 
         //Receives the messages from queue in batches of 10
         public async Task<ReceiveMessageResponse> GetMessagesAsync(IAmazonSQS sqsClient, string qUrl)
