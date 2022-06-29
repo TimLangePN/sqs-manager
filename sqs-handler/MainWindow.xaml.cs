@@ -1,11 +1,11 @@
-﻿using Amazon.Runtime;
-using Amazon.SQS;
+﻿using Amazon.SQS;
 using Amazon.SQS.Model;
 using Sqshandler.Core;
 using System;
 using System.Collections.Generic;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace Sqshandler
 {
@@ -34,7 +34,10 @@ namespace Sqshandler
         {
             var exc = false;
 
-            var sqsClient = CreateAwsSqsClient();
+            AwsCredentialsService awsCredentials = new();
+
+
+            var sqsClient = awsCredentials.CreateAwsSqsClient(env.Text);
 
             if (sqsClient.IsError)
             {
@@ -44,7 +47,7 @@ namespace Sqshandler
 
             List<string> messages = new();
 
-            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{Utils.GetAwsAccount(env.Text)}/{queueInput.Text}";
+            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{Utils.GetAwsAccount(env.Text)}/{ddlQueue.ItemStringFormat}";
 
             var sqsProcessorService = serviceProvider.GetService<ISqsProcessorService>();
 
@@ -72,7 +75,7 @@ namespace Sqshandler
 
             if (exc == false)
             {
-                FileWriterService.WriteToJson(queueInput.Text, messages);
+                FileWriterService.WriteToJson(ddlQueue.ItemStringFormat, messages);
                 statuslabel.Text = "Done!";
             }
 
@@ -90,31 +93,32 @@ namespace Sqshandler
             }
         }
 
-        private (bool IsError, AmazonSQSClient SqsClient, string ErrorMessage) CreateAwsSqsClient()
+        private async void Window_Init(object sender, EventArgs e)
         {
-            //maps the role + accountid from the selected env, Phonixx/Bloxx 
-            SessionAWSCredentials credentials;
+            SqsProcessorService sqsProcessor = new();
+
+            AwsCredentialsService awsCredentials = new();
+
+            var phonixxSqsClient = awsCredentials.CreateAwsSqsClient("Phonixx").SqsClient;
+            var bloxxSqsClient = awsCredentials.CreateAwsSqsClient("Bloxx").SqsClient;
+
             try
             {
-                credentials = AwsCredentialsService.GetCredentials(Utils.GetAwsRole(env.Text));
+                ListQueuesResponse respPhonixx = await sqsProcessor.GetListSqs(phonixxSqsClient);
+                ListQueuesResponse respBloxx = await sqsProcessor.GetListSqs(bloxxSqsClient);
+
+                IEnumerable<string> allddlQueues = respPhonixx.QueueUrls.Union(respPhonixx.QueueUrls);
+
+                foreach (string queue in allddlQueues)
+                {
+                    if (queue.EndsWith("-deadletter")) ddlQueue.Items.Add(queue);
+                }
             }
-            catch (Exception ex)
+            catch (Exception exc)
             {
-                //logging the error message
-                return (true, null, $"Error: {ex.Message}");
+                statuslabel.Text = exc.Message;
+                return;
             }
-
-            //Instantiates the sqsClient
-            var client = new AmazonSQSClient(credentials, Utils.GetAwsRegion(region.Text));
-            return (false, client, "");
-        }
-
-        private void btnGetQueueName_Click(object sender, RoutedEventArgs e)
-        {
-            var sqsClient = CreateAwsSqsClient();
-            var sqsProcessorService = serviceProvider.GetService<ISqsProcessorService>();
-            var resp = sqsProcessorService.GetListSqs(sqsClient.SqsClient);
-
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Sqshandler.Core
         }
 
         //AWS Account id's
-        public static string GetAwsAccount(string env) => env.Equals(Const_Phonixx, StringComparison.InvariantCultureIgnoreCase) ? "660620967782" : "680226270606";
+        public static string GetAwsAccount(string env) => env.Equals(Const_Phonixx, StringComparison.InvariantCultureIgnoreCase) ? "680226270606" : "660620967782";
 
     }
 }

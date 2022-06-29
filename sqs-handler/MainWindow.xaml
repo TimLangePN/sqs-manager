@@ -5,20 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Sqshandler"
         mc:Ignorable="d"
-        Title="SQS Handler" Height="400" Width="400" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Background="#FFDDDDDD">
-    <Grid Margin="0,0,-142,0" Background="#FFC8C8C8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="340*"/>
-            <ColumnDefinition Width="87*"/>
-            <ColumnDefinition Width="115*"/>
-        </Grid.ColumnDefinitions>
-
-        <TextBox x:Name="queueInput" Margin="108,55,0,0" Width="88" TextWrapping="NoWrap" VerticalAlignment="Top" ScrollViewer.CanContentScroll="False" HorizontalAlignment="Left" Height="23"/>
+        Title="SQS Handler" Height="300" Width="400" ResizeMode="NoResize" SizeToContent="WidthAndHeight" Background="#FFDDDDDD" Initialized="Window_Init">
+    <Grid>
 
         <Label x:Name="regionlabel" Content="Region" HorizontalAlignment="Left" Margin="10,89,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <Label x:Name="accountlabel" Content="Account" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
-        <Label x:Name="queuenamelabel" Content="Queue name" Margin="10,52,104,156" FontWeight="Bold"/>
-        <ComboBox x:Name="region" Width="175" Margin="108,93,0,269" HorizontalAlignment="Left">
+        <Label x:Name="queuenamelabel" Content="Queue name" Margin="10,52,303,200" FontWeight="Bold"/>
+        <ComboBox x:Name="region" Width="146" Margin="122,94,0,0" HorizontalAlignment="Left" Grid.ColumnSpan="8" Height="21" VerticalAlignment="Top">
             <ComboBoxItem Content="eu-central-1"/>
             <ComboBoxItem Content="eu-west-1"/>
             <ComboBoxItem Content="eu-west-2"/>
@@ -26,21 +19,19 @@
             <ComboBoxItem Content="eu-west-3"/>
             <ComboBoxItem Content="eu-north-1"/>
         </ComboBox>
-        <ComboBox x:Name="env" Margin="108,15,0,349" HorizontalAlignment="Left" Width="175">
+        <ComboBox x:Name="env" Margin="121,20,0,0" HorizontalAlignment="Left" Width="146" Grid.ColumnSpan="8" Height="19" VerticalAlignment="Top">
             <ComboBoxItem Content="Phonixx"/>
             <ComboBoxItem Content="Bloxx"/>
         </ComboBox>
-        <Button x:Name="Start" Content="Start" Margin="15,172,228,181" Click="Start_Click" FontWeight="Bold"/>
+        <Button x:Name="Start" Content="Start" Margin="15,172,197,23" Click="Start_Click" FontWeight="Bold"/>
 
-        <TextBlock x:Name="statuslabel" HorizontalAlignment="Right" Margin="0,149,24,18" TextWrapping="Wrap" Width="135" Opacity="0.80" FontWeight="Bold" Grid.ColumnSpan="2" Grid.Column="1"/>
+        <TextBlock x:Name="statuslabel" HorizontalAlignment="Right" Margin="0,142,26,23" TextWrapping="Wrap" Width="129" Opacity="0.80" FontWeight="Bold" Grid.ColumnSpan="7" Grid.Column="1"/>
         <Label x:Name="purgeLabel" Content="Purge queue?" HorizontalAlignment="Left" Margin="10,129,0,0" VerticalAlignment="Top" FontWeight="Bold"/>
         <RadioButton x:Name="purgeYes" HorizontalAlignment="Left" Margin="114,142,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="purgeNo" HorizontalAlignment="Left" Margin="146,143,0,0" VerticalAlignment="Top" IsChecked="True"/>
         <Label x:Name="purgeYesLabel" Content="Yes" HorizontalAlignment="Left" Margin="108,123,0,0" VerticalAlignment="Top"/>
         <Label x:Name="purgeNoLabel" Content="No" HorizontalAlignment="Left" Margin="140,124,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5"/>
-        <ComboBox x:Name="ddlQueue" Margin="201,56,0,306" HorizontalAlignment="Left" Width="175" Grid.ColumnSpan="2">
-        </ComboBox>
-        <Button x:Name="btnGetQueueName" Content="Get" Margin="43,56,86,306" Click="btnGetQueueName_Click" FontWeight="Bold" Grid.ColumnSpan="2" Grid.Column="1"/>
+        <ComboBox x:Name="ddlQueue" Margin="121,52,0,0" Grid.ColumnSpan="8" HorizontalAlignment="Left" Width="146" Height="22" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
