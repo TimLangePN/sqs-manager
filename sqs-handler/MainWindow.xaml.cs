@@ -107,7 +107,7 @@ namespace Sqshandler
                 ListQueuesResponse respPhonixx = await sqsProcessor.GetListSqs(phonixxSqsClient);
                 ListQueuesResponse respBloxx = await sqsProcessor.GetListSqs(bloxxSqsClient);
 
-                IEnumerable<string> allddlQueues = respPhonixx.QueueUrls.Union(respPhonixx.QueueUrls);
+                IEnumerable<string> allddlQueues = respPhonixx.QueueUrls.Union(respBloxx.QueueUrls);
 
                 foreach (string queue in allddlQueues)
                 {
