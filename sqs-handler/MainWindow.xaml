@@ -31,7 +31,7 @@
         <RadioButton x:Name="purgeNo" HorizontalAlignment="Left" Margin="146,143,0,0" VerticalAlignment="Top" IsChecked="True"/>
         <Label x:Name="purgeYesLabel" Content="Yes" HorizontalAlignment="Left" Margin="108,123,0,0" VerticalAlignment="Top"/>
         <Label x:Name="purgeNoLabel" Content="No" HorizontalAlignment="Left" Margin="140,124,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5"/>
-        <ComboBox x:Name="ddlQueue" Margin="121,52,0,0" Grid.ColumnSpan="8" HorizontalAlignment="Left" Width="146" Height="22" VerticalAlignment="Top"/>
+        <ComboBox x:Name="ddlQueue" IsEditable="True" IsTextSearchEnabled="True"  Margin="121,52,0,0" HorizontalAlignment="Left" Width="248" Height="22" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

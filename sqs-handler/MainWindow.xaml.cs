@@ -111,7 +111,10 @@ namespace Sqshandler
 
                 foreach (string queue in allddlQueues)
                 {
-                    if (queue.EndsWith("-deadletter")) ddlQueue.Items.Add(queue);
+                    if (queue.EndsWith("-deadletter"))
+                    {   
+                        ddlQueue.Items.Add(queue.Substring(queue.LastIndexOf("/prod") + 1));
+                    }
                 }
             }
             catch (Exception exc)
