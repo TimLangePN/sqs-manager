@@ -1,5 +1,7 @@
-﻿using Amazon.Runtime;
+﻿using Amazon;
+using Amazon.Runtime;
 using Amazon.Runtime.CredentialManagement;
+using Amazon.SQS;
 
 namespace Sqshandler.Core
 {
@@ -26,6 +28,25 @@ namespace Sqshandler.Core
                 }
             }
             throw new Exception(message);
+        }
+
+        public (bool IsError, AmazonSQSClient SqsClient, string ErrorMessage) CreateAwsSqsClient(string env)
+        {
+            //maps the role + accountid from the selected env, Phonixx/Bloxx 
+            SessionAWSCredentials credentials;
+            try
+            {
+                credentials = AwsCredentialsService.GetCredentials(Utils.GetAwsRole(env));
+            }
+            catch (Exception ex)
+            {
+                //logging the error message
+                return (true, null, $"Error: {ex.Message}");
+            }
+
+            //Instantiates the sqsClient
+            var client = new AmazonSQSClient(credentials, RegionEndpoint.EUCentral1);
+            return (false, client, "");
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using Amazon.Runtime;
-using Amazon.SQS;
+﻿using Amazon.SQS;
 using Amazon.SQS.Model;
 using Sqshandler.Core;
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace Sqshandler
 {
@@ -13,34 +14,42 @@ namespace Sqshandler
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ServiceProvider serviceProvider;
+
         public MainWindow()
         {
+            ServiceCollection services = new ServiceCollection();
+            ConfigureServices(services);
+            serviceProvider = services.BuildServiceProvider();
             InitializeComponent();
         }
+
+        private void ConfigureServices(ServiceCollection services)
+        {
+            services.AddSingleton<ISqsProcessorService, SqsProcessorService>();
+            services.AddSingleton<IAmazonSQS, AmazonSQSClient>();
+        }
+
         public async void Start_Click(object sender, RoutedEventArgs e)
         {
             var exc = false;
 
-            //maps the role + accountid from the selected env, Phonixx/Bloxx 
-            SqsProcessorService sqsservice = new(env.Text, region.Text);
+            AwsCredentialsService awsCredentials = new();
 
-            SessionAWSCredentials credentials;
-            try
+
+            var sqsClient = awsCredentials.CreateAwsSqsClient(env.Text);
+
+            if (sqsClient.IsError)
             {
-                credentials = AwsCredentialsService.GetCredentials(sqsservice.Role);
-            }
-            catch (Exception ex)
-            {
-                statuslabel.Text = ex.Message;
+                statuslabel.Text = sqsClient.ErrorMessage;
                 return;
             }
 
-            //Instantiates the sqsClient
-            AmazonSQSClient sqsClient = new(credentials, sqsservice.Region);
-
             List<string> messages = new();
 
-            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{sqsservice.AccountId}/{queueInput.Text}";
+            string qUrl = $"https://sqs.{region.Text}.amazonaws.com/{Utils.GetAwsAccount(env.Text)}/{ddlQueue.ItemStringFormat}";
+
+            var sqsProcessorService = serviceProvider.GetService<ISqsProcessorService>();
 
             //Loops 100 times through the amount of messages polled, to make sure we get all the messages.
             for (int i = 0; i < 100; i++)
@@ -48,9 +57,9 @@ namespace Sqshandler
                 try
                 {
                     //Gets messages from sqs in batches of 10
-                    ReceiveMessageResponse response = await SqsProcessorService.GetMessagesAsync(sqsClient, qUrl);
+                    ReceiveMessageResponse response = await sqsProcessorService.GetMessagesAsync(sqsClient.SqsClient, qUrl);
 
-                    statuslabel.Text = "Downloading...";
+                    statuslabel.Text = $"Downloading index: {i}";
 
                     foreach (var message in response.Messages)
                     {
@@ -63,19 +72,55 @@ namespace Sqshandler
                     exc = true;
                 }
             }
+
             if (exc == false)
             {
-                FileWriterService.WriteToJson(queueInput.Text, messages);
+                FileWriterService.WriteToJson(ddlQueue.ItemStringFormat, messages);
                 statuslabel.Text = "Done!";
             }
+
             if (purgeYes.IsChecked == true)
             {
                 try
                 {
-                    sqsClient.PurgeQueueAsync(qUrl).Wait();
+                    sqsClient.SqsClient.PurgeQueueAsync(qUrl).Wait();
                     statuslabel.Text = "Messages have been purged!";
                 }
-                catch (Exception ex) { statuslabel.Text = ex.Message; }
+                catch (Exception ex)
+                {
+                    statuslabel.Text = ex.Message;
+                }
+            }
+        }
+
+        private async void Window_Init(object sender, EventArgs e)
+        {
+            SqsProcessorService sqsProcessor = new();
+
+            AwsCredentialsService awsCredentials = new();
+
+            var phonixxSqsClient = awsCredentials.CreateAwsSqsClient("Phonixx").SqsClient;
+            var bloxxSqsClient = awsCredentials.CreateAwsSqsClient("Bloxx").SqsClient;
+
+            try
+            {
+                ListQueuesResponse respPhonixx = await sqsProcessor.GetListSqs(phonixxSqsClient);
+                ListQueuesResponse respBloxx = await sqsProcessor.GetListSqs(bloxxSqsClient);
+
+                IEnumerable<string> allddlQueues = respPhonixx.QueueUrls.Union(respBloxx.QueueUrls);
+
+                foreach (string queue in allddlQueues)
+                {
+                    if (queue.EndsWith("-deadletter"))
+                    {   
+                        ddlQueue.Items.Add(queue.Substring(queue.LastIndexOf("/prod") + 1));
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                statuslabel.Text = exc.Message;
+                return;
             }
         }
     }

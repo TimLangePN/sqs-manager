@@ -11,4 +11,8 @@
     <PackageReference Include="AWSSDK.SQS" Version="3.7.2.72" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
